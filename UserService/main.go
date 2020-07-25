@@ -40,8 +40,7 @@ func main() {
 		Help:      "The result of each count method.",
 	}, []string{}) // no fields here
 	dbmname := "mysql"
-	var svc AccountService
-	svc = accountservice{}
+	var svc UserService
 	{
 		if dbmname == "mongo" {
 			db := GetMongoDB()
@@ -65,37 +64,37 @@ func main() {
 	svc = loggingMiddleware{logger, svc}
 	svc = instrumentingMiddleware{requestCount, requestLatency, countResult, svc}
 
-	CreateAccountHandler := httptransport.NewServer(
-		makeCreateCustomerEndpoint(svc),
-		decodeCreateCustomerRequest,
+	CreateUserHandler := httptransport.NewServer(
+		makeCreateUserEndpoint(svc),
+		decodeCreateUserRequest,
 		encodeResponse,
 	)
 	GetByIdHandler := httptransport.NewServer(
-		makeGetCustomerByIdEndpoint(svc),
-		decodeGetCustomerByIdRequest,
+		makeGetUserByIdEndpoint(svc),
+		decodeGetUserByIdRequest,
 		encodeResponse,
 	)
-	GetAllCustomersHandler := httptransport.NewServer(
-		makeGetAllCustomersEndpoint(svc),
-		decodeGetAllCustomersRequest,
+	GetAllUsersHandler := httptransport.NewServer(
+		makeGetAllUsersEndpoint(svc),
+		decodeGetAllUsersRequest,
 		encodeResponse,
 	)
-	DeleteCustomerHandler := httptransport.NewServer(
-		makeDeleteCustomerEndpoint(svc),
-		decodeDeleteCustomerRequest,
+	DeleteUserHandler := httptransport.NewServer(
+		makeDeleteUserEndpoint(svc),
+		decodeDeleteUserRequest,
 		encodeResponse,
 	)
-	UpdateCustomerHandler := httptransport.NewServer(
-		makeUpdateCustomerEndpoint(svc),
-		decodeUpdateCustomerRequest,
+	UpdateUserHandler := httptransport.NewServer(
+		makeUpdateUserEndpoint(svc),
+		decodeUpdateUserRequest,
 		encodeResponse,
 	)
 	http.Handle("/", r)
-	http.Handle("/account", CreateAccountHandler)
-	r.Handle("/account/{id}", GetByIdHandler).Methods("GET")
-	r.Handle("/deletecustomer/{id}", DeleteCustomerHandler).Methods("GET")
-	r.Handle("/updatecustomer/", UpdateCustomerHandler).Methods("PUT")
-	r.Handle("/getall", GetAllCustomersHandler).Methods("GET")
+	http.Handle("/create", CreateUserHandler)
+	r.Handle("/user/{id}", GetByIdHandler).Methods("GET")
+	r.Handle("/deleteuser/{id}", DeleteUserHandler).Methods("GET")
+	r.Handle("/updateuser/", UpdateUserHandler).Methods("PUT")
+	r.Handle("/getall", GetAllUsersHandler).Methods("GET")
 	http.Handle("/metrics", promhttp.Handler())
 	logger.Log("msg", "HTTP", "addr", ":8000")
 	logger.Log("err", http.ListenAndServe(":8000", nil))
