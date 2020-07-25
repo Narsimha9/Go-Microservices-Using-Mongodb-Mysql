@@ -36,7 +36,6 @@ func main() {
 	}, []string{})
 
 	db := GetMongoDB()
-	// var svcs OrderService
 	var svc OrderService
 	{
 		repository, err := NewRepo(db, logger)
@@ -59,8 +58,3 @@ func main() {
 	logger.Log("msg", "HTTP", "addr", ":8083")
 	logger.Log("err", http.ListenAndServe(":8083", nil))
 }
-
-// GetDb() func
-// service name
-//routes
-// port address

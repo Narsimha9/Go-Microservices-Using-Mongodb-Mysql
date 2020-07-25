@@ -21,7 +21,6 @@ func (mw instrumentingMiddleware) Create(ctx context.Context, order Order) (outp
 		mw.requestCount.With(lvs...).Add(1)
 		mw.requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
 	}(time.Now())
-
 	output, err = mw.next.Create(ctx, order)
 	return
 }
